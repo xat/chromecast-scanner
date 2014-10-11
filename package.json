@@ -1,0 +1,23 @@
+{
+  "name": "chromecast-scanner",
+  "version": "0.0.1",
+  "description": "scan your local network for chromecast devices and return the first found.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xat/chromecast-scanner/"
+  },
+  "keywords": [
+    "chromecast",
+    "mdns",
+    "scanner"
+  ],
+  "author": "Simon Kusterer",
+  "license": "MIT",
+  "dependencies": {
+    "mdns-js2": "0.0.5"
+  }
+}
