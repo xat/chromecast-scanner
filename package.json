@@ -18,6 +18,6 @@
   "author": "Simon Kusterer",
   "license": "MIT",
   "dependencies": {
-    "mdns-js2": "0.0.5"
+    "mdns-js": "0.2.x"
   }
 }
