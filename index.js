@@ -8,6 +8,22 @@ module.exports = function(opts, cb) {
 
   var browser = mdns.createBrowser(mdns.tcp('googlecast'));
 
+  var getDeviceName = function(service) {
+    var device = service.txt
+      .map(function(entry) {
+        var pieces = entry.split('=');
+        return {
+          type: pieces[0],
+          val: pieces[1]
+        }
+      })
+      .filter(function(entry) {
+        return entry.type === 'fn';
+      });
+    if (!device.length) return;
+    return device[0].val;
+  };
+
   var timer = setTimeout(function() {
     browser.stop();
     cb(new Error('device not found'));
@@ -18,16 +34,14 @@ module.exports = function(opts, cb) {
   });
 
   browser.on('update', function(service) {
-    if (opts.device && opts.device !== service.host) return;
+    var deviceName = getDeviceName(service);
+    if (opts.device && opts.device !== deviceName) return;
     clearTimeout(timer);
-    timer = setTimeout(function () {
-      //wait for some time if more than one chromecast on the network
-      browser.stop();
-    }, 5000);
+    browser.stop();
     // make it easier for the user to
     // resolve the address.
     service.address = service.addresses[0];
-    service.name = service.host;
+    service.name = deviceName;
     cb(null, service);
   });
 
