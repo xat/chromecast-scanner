@@ -1,4 +1,4 @@
-var mdns = require('mdns-js2');
+var mdns = require('mdns-js');
 
 module.exports = function(opts, cb) {
   if (typeof opts === 'function') {
@@ -6,10 +6,10 @@ module.exports = function(opts, cb) {
     opts = {};
   }
 
-  var browser = new mdns.Mdns(mdns.tcp('googlecast'));
+  var browser = mdns.createBrowser(mdns.tcp('googlecast'));
 
   var timer = setTimeout(function() {
-    browser.shutdown();
+    browser.stop();
     cb(new Error('device not found'));
   }, opts.ttl || 10000);
 
@@ -18,12 +18,16 @@ module.exports = function(opts, cb) {
   });
 
   browser.on('update', function(service) {
-    if (opts.device && opts.device !== service.name) return;
+    if (opts.device && opts.device !== service.host) return;
     clearTimeout(timer);
-    browser.shutdown();
+    timer = setTimeout(function () {
+      //wait for some time if more than one chromecast on the network
+      browser.stop();
+    }, 5000);
     // make it easier for the user to
     // resolve the address.
-    service.address = service.remote.address;
+    service.address = service.addresses[0];
+    service.name = service.host;
     cb(null, service);
   });
 
