@@ -7,11 +7,18 @@ first found.
 ```javascript
 var scanner = require('chromecast-scanner');
 
+// MDNS:
 scanner(function(err, service) {
-  console.log('chromecast %s running on: %s:%s',
+  console.log('chromecast %s running on: %s',
     service.name,
-    service.address,
-    service.port);
+    service.address);
+});
+
+// SSDP
+scanner({ type: 'ssdp' }, function(err, service) {
+  console.log('chromecast %s running on: %s',
+    service.name,
+    service.address);
 });
 ```
 
