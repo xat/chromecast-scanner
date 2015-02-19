@@ -13,13 +13,6 @@ scanner(function(err, service) {
     service.name,
     service.address);
 });
-
-// SSDP
-scanner({ type: 'ssdp' }, function(err, service) {
-  console.log('chromecast %s running on: %s',
-    service.name,
-    service.address);
-});
 ```
 
 ### Installation

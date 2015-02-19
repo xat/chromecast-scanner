@@ -1,6 +1,6 @@
 {
   "name": "chromecast-scanner",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "scan your local network for chromecast devices and return the first found.",
   "main": "index.js",
   "scripts": {
@@ -18,9 +18,7 @@
   "author": "Simon Kusterer",
   "license": "MIT",
   "dependencies": {
-    "got": "^2.3.2",
-    "mdns-js": "0.2.x",
-    "node-ssdp": "^2.0.1",
+    "mdns-js": "xat/node-mdns-js#reuseAddr",
     "xtend": "^4.0.0"
   }
 }
