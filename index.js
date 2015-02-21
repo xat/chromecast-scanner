@@ -24,12 +24,6 @@ module.exports = function(opts, cb) {
     cb(new Error('device not found'));
   }, opts.ttl);
 
-  var extract = function(additionals) {
-    return find(additionals, function(entry) {
-      return entry.type === 'A';
-    });
-  };
-
   var onResponse = function(response) {
     var answer = response.answers[0];
 
