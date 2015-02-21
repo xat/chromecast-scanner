@@ -1,8 +1,12 @@
-var mdns = require('mdns-js');
+var mdns = require('multicast-dns');
+var find = require('array-find');
 var xtend = require('xtend');
 
 var defaults = {
-  ttl: 10000
+  ttl: 10000,
+  service_name: '_googlecast._tcp.local',
+  service_type: 'PTR',
+  mdns: {}
 };
 
 module.exports = function(opts, cb) {
@@ -13,43 +17,53 @@ module.exports = function(opts, cb) {
     opts = xtend(defaults, opts);
   }
 
-  var browser = mdns.createBrowser(mdns.tcp('googlecast'));
-
-  var getDeviceName = function(service) {
-    var device = service.txt
-    .map(function(entry) {
-      var pieces = entry.split('=');
-      return {
-        type: pieces[0],
-        val: pieces[1]
-      }
-    })
-    .filter(function(entry) {
-      return entry.type === 'fn';
-    });
-    if (!device.length) return;
-    return device[0].val;
-  };
+  var m = mdns(opts.mdns);
 
   var timer = setTimeout(function() {
-    browser.stop();
+    close();
     cb(new Error('device not found'));
   }, opts.ttl);
 
-  browser.once('ready', function() {
-    browser.discover();
+  var extract = function(additionals) {
+    return find(additionals, function(entry) {
+      return entry.type === 'A';
+    });
+  };
+
+  var onResponse = function(response) {
+    var answer = response.answers[0];
+
+    if (answer.name !== opts.service_name ||
+        answer.type !== opts.service_type) {
+      return;
+    }
+
+    var info = find(response.additionals, function(entry) {
+      return entry.type === 'A';
+    });
+
+    if (!info || (opts.name && info.name !== opts.name)) {
+      return;
+    };
+
+    cb(null, info, response);
+    close();
+  };
+
+  m.on('response', onResponse)
+
+  m.query({
+    questions:[{
+      name: opts.service_name,
+      type: opts.service_type
+    }]
   });
 
-  browser.on('update', function(service) {
-    var deviceName = getDeviceName(service);
-    if (opts.device && opts.device !== deviceName) return;
+  var close = function() {
+    m.removeListener('response', onResponse);
     clearTimeout(timer);
-    browser.stop();
-    // make it easier for the user to
-    // resolve the address.
-    service.address = service.addresses[0];
-    service.name = deviceName;
-    cb(null, service);
-  });
+    m.destroy();
+  };
 
+  return close;
 };
