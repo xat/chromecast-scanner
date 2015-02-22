@@ -1,6 +1,6 @@
 {
   "name": "chromecast-scanner",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "scan your local network for chromecast devices and return the first found.",
   "main": "index.js",
   "scripts": {
