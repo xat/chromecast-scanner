@@ -1,6 +1,7 @@
 var mdns = require('multicast-dns');
 var find = require('array-find');
 var xtend = require('xtend');
+var semver = require('semver');
 
 var defaults = {
   ttl: 10000,
@@ -15,6 +16,10 @@ module.exports = function(opts, cb) {
     opts = defaults;
   } else {
     opts = xtend(defaults, opts);
+  }
+
+  if (semver.gte(process.versions.node, '0.11.13')) {
+    opts.mdns.reuseAddr = true;
   }
 
   var m = mdns(opts.mdns);
