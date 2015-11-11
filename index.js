@@ -27,8 +27,9 @@ module.exports = function(opts, cb) {
   var onResponse = function(response) {
     var answer = response.answers[0];
 
-    if (answer.name !== opts.service_name ||
-        answer.type !== opts.service_type) {
+    if (answer &&
+        (answer.name !== opts.service_name ||
+         answer.type !== opts.service_type)) {
       return;
     }
 
