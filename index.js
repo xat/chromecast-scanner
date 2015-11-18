@@ -39,13 +39,13 @@ module.exports = function(opts, cb) {
 
     if (!info || (opts.name && info.name !== opts.name)) {
       return;
-    };
+    }
 
     cb(null, info, response);
     close();
   };
 
-  m.on('response', onResponse)
+  m.on('response', onResponse);
 
   m.query({
     questions:[{
