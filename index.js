@@ -3,7 +3,7 @@ var find = require('array-find');
 var xtend = require('xtend');
 
 var defaults = {
-  ttl: 10000,
+  ttl: 5000,
   service_name: '_googlecast._tcp.local',
   service_type: 'PTR',
   mdns: {}
@@ -21,7 +21,6 @@ module.exports = function(opts, cb) {
 
   var timer = setTimeout(function() {
     close();
-    cb(new Error('device not found'));
   }, opts.ttl);
 
   var onResponse = function(response) {
@@ -42,7 +41,7 @@ module.exports = function(opts, cb) {
     }
 
     cb(null, info, response);
-    close();
+    return;
   };
 
   m.on('response', onResponse);
